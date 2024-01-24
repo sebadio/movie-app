@@ -1,11 +1,11 @@
 import type { Movie } from "../types/Movie";
-const auth = import.meta.env.PUBLIC_TOKEN;
+const token = import.meta.env.PUBLIC_TOKEN;
 
 const options = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization: auth,
+    Authorization: token,
   },
 };
 
