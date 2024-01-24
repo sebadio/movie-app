@@ -1,0 +1,11 @@
+---
+import Footer from "@components/Footer.astro";
+import MovieDetails from "@components/MovieDetails.svelte";
+import Navbar from "@components/Navbar.astro";
+import Layout from "@layouts/Layout.astro";
+---
+
+<Layout title={""}>
+  <Navbar />
+  <MovieDetails client:only />
+</Layout>

@@ -4,23 +4,25 @@
   function truncate(str, n) {
     return str?.length > n ? str.substr(0, n - 1) + "..." : str;
   }
-  console.log(movie);
 </script>
 
 <article class="w-[200px] max-h-[400px]">
   <a
-    href={`https://www.themoviedb.org/movie/${id}`}
+    href={`/movie-app/movie?id=${id}`}
     class="hover:underline underline-offset-4 hover:text-violet-600 transition-all duration-300"
     rel="noopener noreferrer"
-    target="_blank"
   >
     <img
       width="200"
       height="300"
-      class="w-full rounded"
+      class="w-full rounded bg-slate-600 animate-pulse"
       src={`https://image.tmdb.org/t/p/w200${poster_path}`}
       alt=""
       srcset=""
+      loading="lazy"
+      on:load={(e) => {
+        e.target.classList.remove("animate-pulse");
+      }}
     />
     <h2 class="font-bold text-balance text-xl" {title}>
       {truncate(title, 20)}
