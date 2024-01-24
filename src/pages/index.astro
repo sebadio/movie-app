@@ -1,10 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import App from "../components/App.svelte";
-import Navbar from "../components/Navbar.svelte";
+import Navbar from "../components/Navbar.astro";
+import Footer from "@components/Footer.astro";
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Movies">
   <Navbar />
   <App client:load />
+  <Footer />
 </Layout>
