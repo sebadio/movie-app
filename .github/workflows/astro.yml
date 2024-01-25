@@ -33,7 +33,7 @@ jobs:
         name: Build
         runs-on: ubuntu-latest
         env:
-            PUBLIC_TOKEN: ${{ secrets.PUBLIC_TOKEN }}
+            PUBLIC_TOKEN: "${{ secrets.PUBLIC_TOKEN }}"
 
         steps:
             - name: Checkout
@@ -67,8 +67,11 @@ jobs:
             - name: Install dependencies
               run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
               working-directory: ${{ env.BUILD_PATH }}
+              # create .env file with the contents of the PUBLIC_TOKEN secret
             - name: Add environment variables
-              run: echo "PUBLIC_TOKEN=${{ env.PUBLIC_TOKEN }}" >> $GITHUB_ENV
+              run: |
+                  echo "PUBLIC_TOKEN=${{ env.PUBLIC_TOKEN }}" >> $GITHUB_ENV
+
             - name: Build with Astro
               run: |
                   ${{ steps.detect-package-manager.outputs.runner }} astro build \
