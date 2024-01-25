@@ -68,7 +68,7 @@ jobs:
               run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
               working-directory: ${{ env.BUILD_PATH }}
             - name: Add environment variables
-              run: PUBLIC_TOKEN=${{ secrets.PUBLIC_TOKEN }}
+              run: PUBLIC_TOKEN=${{ env.PUBLIC_TOKEN }}
             - name: Build with Astro
               run: |
                   ${{ steps.detect-package-manager.outputs.runner }} astro build \
