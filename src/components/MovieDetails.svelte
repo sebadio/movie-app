@@ -1,134 +1,26 @@
 <script>
-    import { onMount } from "svelte";
     import { getMovieDetails } from "../helpers/getMovieDetails";
     import Rating from "./Rating.svelte";
+    import MovieDetailsPlaceholder from "./placeholders/MovieDetailsPlaceholder.svelte";
 
-    document.title = "Loading...";
-
-    let id;
-    let title = null;
-    let image = null;
-    let overview = null;
-    let backdrop_image = null;
-    let rating = 0;
-    let cantReviews = 0;
-    let tagline = null;
-    let homePage = null;
-    let genres = [];
-    let runtime = 0;
-
-    let loading = true;
-
-    onMount(async () => {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        id = urlParams.get("id");
-        const movieData = await getMovieDetails(id);
-        title = movieData.title;
-        image = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
-        overview = movieData.overview;
-        backdrop_image = `https://image.tmdb.org/t/p/w1280${movieData.backdrop_path}`;
-        rating = parseFloat(movieData.vote_average);
-        cantReviews = parseInt(movieData.vote_count);
-        tagline = movieData.tagline;
-        homePage = movieData.homepage;
-        genres = movieData.genres.map((genre) => genre.name);
-        runtime = movieData.runtime;
-
+    function setDocumentTitle(title) {
+        console.log("setDocumentTitle", title);
         document.title = title;
-
-        console.log(movieData);
-        loading = false;
-    });
+    }
+    setDocumentTitle("Movie Details");
 </script>
 
 <main class="text-xl min-h-screen h-full">
-    {#if loading}
+    {#await getMovieDetails(new URLSearchParams(window.location.search).get("id"))}
+        <MovieDetailsPlaceholder />
+    {:then { backdrop_path, genres, overview, runtime, tagline, title, vote_average, vote_count }}
         <div class="relative overflow-hidden">
             <div
-                class="absolute top-0 left-0 h-full w-full bg-cover bg-center bg-no-repeat -z-10 blur-md bg-stone-800/50"
-            ></div>
-            <div
-                class="m-auto aspect-video w-auto h-auto lg:h-96 z-10 bg-zinc-950 animate-pulse"
-            ></div>
-        </div>
-
-        <div
-            class="flex flex-col gap-8 m-auto p-4 w-[1000px] max-w-[calc(100%-2rem)]"
-        >
-            <div>
-                <div
-                    class="h-[4ch] bg-slate-100/40 animate-pulse rounded"
-                ></div>
-                <div
-                    class="flex flex-wrap gap-4 justify-between items-baseline"
-                >
-                    <div
-                        class="w-[30ch] h-[2ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                    ></div>
-                    <div
-                        class="w-[10ch] h-[2ch] bg-slate-100/40 rounded animate-pulse"
-                    ></div>
-                </div>
-
-                <div class="mt-4">
-                    <div
-                        class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                    ></div>
-                    <div class="flex flex-wrap gap-x-4 gap-y-1">
-                        <span
-                            class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                        ></span>
-                        <span
-                            class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                        ></span>
-                        <span
-                            class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                        ></span>
-                        <span
-                            class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                        ></span>
-                        <span
-                            class="w-[10ch] h-[1ch] mt-2 bg-slate-100/40 rounded animate-pulse"
-                        ></span>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-                <div
-                    class="h-[1ch] w-full bg-slate-100/40 animate-pulse mt-2"
-                ></div>
-            </div>
-        </div>
-    {:else}
-        <div class="relative overflow-hidden">
-            <div
-                style={`background-image: url(${backdrop_image});`}
+                style={`background-image: url(https://image.tmdb.org/t/p/w1280${backdrop_path});`}
                 class={`absolute top-0 left-0 h-full w-full bg-cover bg-center bg-no-repeat -z-10 blur-md brightness-75`}
             ></div>
             <img
-                src={backdrop_image}
+                src={`https://image.tmdb.org/t/p/w1280${backdrop_path}`}
                 width="1280"
                 height="720"
                 alt=""
@@ -149,7 +41,7 @@
                     <h2 class="mt-2 font-extralight">
                         {tagline}
                     </h2>
-                    <Rating {rating} {cantReviews} />
+                    <Rating rating={vote_average} cantReviews={vote_count} />
                 </div>
 
                 <div
@@ -158,10 +50,10 @@
                     <div>
                         <strong>Genres:</strong>
                         <div class="flex flex-wrap gap-4">
-                            {#each genres as genre}
+                            {#each genres as { name }}
                                 <span
                                     class="text-pretty font-extralight text-base"
-                                    >{genre}</span
+                                    >{name}</span
                                 >
                             {/each}
                         </div>
@@ -181,5 +73,22 @@
                 <p class="text-pretty leading-7">{overview}</p>
             </div>
         </article>
-    {/if}
+    {:catch error}
+        <div
+            class="flex flex-col justify-center items-center gap-8 m-auto h-screen p-4 w-[1000px] max-w-[calc(100%-2rem)]"
+        >
+            <h1
+                class="text-5xl text-center md:text-left font-bold text-balance"
+            >
+                404
+            </h1>
+            <p class="text-pretty leading-7">
+                Sorry! {error.message} for movie with id: {new URLSearchParams(
+                    window.location.search,
+                ).get("id")}
+                <br />
+            </p>
+            <a class="hover:text-blue-600" href="/movie-app">Go back</a>
+        </div>
+    {/await}
 </main>
