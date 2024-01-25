@@ -70,7 +70,7 @@ jobs:
               # create .env file with the contents of the PUBLIC_TOKEN secret
             - name: Add environment variables
               run: |
-                  echo "PUBLIC_TOKEN=${{ env.PUBLIC_TOKEN }}" >> $GITHUB_ENV
+                  echo "PUBLIC_TOKEN=${{ env.PUBLIC_TOKEN }}" >> .env
 
             - name: Build with Astro
               run: |
